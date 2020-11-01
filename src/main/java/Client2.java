@@ -13,8 +13,7 @@ public class Client2 {
             DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             BufferedReader brk = new BufferedReader(new InputStreamReader(System.in));
-            System.out.print("Input your username: ");
-            dos.writeBytes(brk.readLine() + "\n");
+
             for(;;){
                 if(br.ready()){
                     System.out.println(br.readLine());
@@ -22,6 +21,7 @@ public class Client2 {
                 if(brk.ready()){
                     String dataToSend = brk.readLine();
                     if (dataToSend.equals("exit")) {
+                        //wyslij info do serwera o zamknieciu klienta (Handlera)
                         break;
                     } else {
                         dos.writeBytes(dataToSend + "\n");
