@@ -9,7 +9,8 @@ public enum Mode {
         this.mode = mode;
     }
 
-    public String getMode(){
+    @Override
+    public String toString() {
         return mode;
     }
 }

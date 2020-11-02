@@ -13,7 +13,8 @@ public enum Command {
         this.command = command;
     }
 
-    public String getCommand(){
+    @Override
+    public String toString() {
         return command;
     }
 

@@ -1,3 +1,6 @@
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Message {
 
     private String command;
@@ -9,7 +12,7 @@ public class Message {
     }
 
     public String getCommand() {
-        return command;
+        return command.toUpperCase();
     }
 
     public String getMessage() {
@@ -21,23 +24,23 @@ public class Message {
     }
 
     private void decodeMessage(String data){
-        String header;
-        if(data != null){
-            header = data.substring(data.indexOf("<<"), data.lastIndexOf(">>"));
-            if(header.length() > 0) {
+        Pattern compiledPattern = Pattern.compile("<<.+>>.*");
+        Matcher matcher = compiledPattern.matcher(data);
+
+        if(matcher.matches()){
+            String header = data.substring(data.indexOf("<<")+2, data.lastIndexOf(">>"));
                 if (!data.endsWith(">>")) {
-                    this.message = data.substring(data.lastIndexOf(">>"));
+                    this.message = data.substring(data.lastIndexOf(">>")+2);
                 }
                 if (header.contains(":")) {
-                    String headerParts[] = header.split(":");
+                    String[] headerParts = header.split(":");
                     this.command = headerParts[0];
                     this.username = headerParts[1];
                 } else {
                     this.command = header;
                 }
-            }
         } else {
-            this.command = Command.WRONG_COMMAND.getCommand();
+            this.command = Command.WRONG_COMMAND.toString();
         }
 
     }

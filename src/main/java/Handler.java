@@ -4,22 +4,23 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.util.List;
+import java.util.Objects;
 
-public class Handler implements Runnable{
-    private Socket socket;
-    private BufferedReader bufferedReader;
-    private PrintStream printStream;
+public class Handler implements Runnable {
+    private final Socket socket;
+    private final BufferedReader bufferedReader;
+    private final PrintStream printStream;
     private String username;
-    private String mode;
-    private List<Handler> clientHandlers;
+    private final String mode;
+    private final List<Handler> clientHandlers;
 
 
-    public Handler(Socket socket, List<Handler> clientHandlers) throws IOException{
+    public Handler(Socket socket, List<Handler> clientHandlers) throws IOException {
         this.socket = socket;
         this.bufferedReader = new BufferedReader(new InputStreamReader((socket.getInputStream())));
         this.printStream = new PrintStream(socket.getOutputStream());
         this.username = RandomString.getAlphaNumericString(10);
-        this.mode = Mode.READY.getMode();
+        this.mode = Mode.READY.toString();
         this.clientHandlers = clientHandlers;
     }
 
@@ -41,75 +42,84 @@ public class Handler implements Runnable{
         Message message;
         System.out.println(username + " is connected.");
         sendDataToSender(Command.getCommandList());
-        for(;;){
+        for (; ; ) {
             receivedData = getData();
-            if(receivedData != null) {
+            if (receivedData != null) {
                 message = new Message(receivedData);
-                if (!message.getCommand().equals(Command.WRONG_COMMAND.getCommand())) {
-                    if (message.getCommand().equals(Command.TEXT.getCommand())) {
-                        boolean result = sendDataToReceiver(message.getUsername(), message.getMessage());
-                        if (!result) {
-                            sendDataToSender("Given username not exist! The message was not sent.");
-                        }
-                    } else if (message.getCommand().equals(Command.SET_USERNAME.getCommand())) {
-                        setUsername(message.getMessage());
-                    } else if (message.getCommand().equals(Command.SHOW_OPTIONS.getCommand())) {
-                        sendDataToSender(Command.getCommandList());
-                    } else if (message.getCommand().equals(Command.GET_USERS.getCommand())) {
-                        sendDataToSender(showUserList(Mode.READY.getMode()));
+                if (Objects.equals(message.getCommand(), Command.TEXT.toString())) {
+                    boolean result = sendDataToReceiver(message.getUsername(), message.getMessage());
+                    if (!result) {
+                        sendDataToSender("Given username not exist! The message was not sent.");
                     }
+                } else if (Objects.equals(message.getCommand(), Command.SET_USERNAME.toString())) {
+                    setUsername(message.getMessage());
+                } else if (Objects.equals(message.getCommand(), Command.SHOW_OPTIONS.toString())) {
+                    sendDataToSender(Command.getCommandList());
+                } else if (Objects.equals(message.getCommand(), Command.GET_USERS.toString())) {
+                    sendDataToSender(showUserList(Mode.READY.toString()));
+                } else if (Objects.equals(message.getCommand(), Command.EXIT.toString())) {
+                    closeConnection();
                 } else {
                     sendDataToSender("Wrong command.");
                 }
             }
+            sleep(100);
         }
     }
 
-    private String getData(){
+    private String getData() {
         try {
-            if(bufferedReader.ready()){
+            if (bufferedReader.ready()) {
                 return bufferedReader.readLine();
             }
-        }catch (IOException ex){
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
         return null;
     }
 
-    private void sendDataToSender(String data){
+    private void sendDataToSender(String data) {
         printStream.println(data);
     }
 
     private boolean sendDataToReceiver(String username, String text) {
         Handler handler = findUser(username);
         if (handler != null) {
-            handler.sendDataToSender(text);
+            handler.sendDataToSender(getUsername() + ": " + text);
             return true;
         }
         return false;
     }
 
-    private void closeConnection(){
+    private void closeConnection() {
         //todo
     }
 
-    private Handler findUser(String username){
-        for (Handler handler : clientHandlers){
-            if(handler.getUsername().equals(username)){
+    private Handler findUser(String username) {
+        for (Handler handler : clientHandlers) {
+            if (handler.getUsername().equals(username)) {
                 return handler;
             }
         }
         return null;
     }
 
-    private String showUserList(String mode){
+    private String showUserList(String mode) {
         StringBuilder userList = new StringBuilder();
         userList.append("Available users: \r\n");
-        for(Handler handler : clientHandlers){
-            if(handler.getMode().equals(mode)){
+        for (Handler handler : clientHandlers) {
+            if (handler.getMode().equals(mode)) {
                 userList.append("* ").append(handler.getUsername());
             }
         }
         return userList.toString();
+    }
+
+    private void sleep(int milliseconds) {
+        try {
+            Thread.sleep(milliseconds);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
