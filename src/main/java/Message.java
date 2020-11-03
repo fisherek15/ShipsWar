@@ -8,6 +8,7 @@ public class Message {
     private String username;
 
     public Message(String data) {
+        this.message = "";
         decodeMessage(data);
     }
 

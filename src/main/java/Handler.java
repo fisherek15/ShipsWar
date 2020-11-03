@@ -11,7 +11,7 @@ public class Handler implements Runnable {
     private final BufferedReader bufferedReader;
     private final PrintStream printStream;
     private String username;
-    private final String mode;
+    private String mode;
     private final List<Handler> clientHandlers;
 
 
@@ -32,6 +32,15 @@ public class Handler implements Runnable {
         return mode;
     }
 
+    public boolean setMode(String mode) {
+        if(Objects.equals(mode.toUpperCase(), Mode.BUSY.toString())){
+            this.mode = Mode.BUSY.toString();
+            return true;
+        } else if (Objects.equals(mode.toUpperCase(), Mode.READY.toString())){
+            this.mode = Mode.READY.toString();
+            return true;
+        } else return false;
+    }
     private void setUsername(String username) {
         this.username = username;
     }
@@ -53,12 +62,22 @@ public class Handler implements Runnable {
                     }
                 } else if (Objects.equals(message.getCommand(), Command.SET_USERNAME.toString())) {
                     setUsername(message.getMessage());
+                    sendDataToSender("Your username has been set to " + getUsername());
                 } else if (Objects.equals(message.getCommand(), Command.SHOW_OPTIONS.toString())) {
                     sendDataToSender(Command.getCommandList());
                 } else if (Objects.equals(message.getCommand(), Command.GET_USERS.toString())) {
                     sendDataToSender(showUserList(Mode.READY.toString()));
                 } else if (Objects.equals(message.getCommand(), Command.EXIT.toString())) {
                     closeConnection();
+                    sendDataToSender("This connection has been closed.");
+                } else if (Objects.equals(message.getCommand(), Command.GET_USERNAME.toString())) {
+                    sendDataToSender(getUsername());
+                } else if (Objects.equals(message.getCommand(), Command.SET_USER_MODE.toString())){
+                    if(setMode(message.getMessage())) {
+                        sendDataToSender("Your user mode has been set to " + getMode());
+                    } else {
+                        sendDataToSender("Wrong mode. You can set " + Mode.BUSY.toString() + " or " + Mode.READY.toString() + " only.");
+                    }
                 } else {
                     sendDataToSender("Wrong command.");
                 }
@@ -109,7 +128,7 @@ public class Handler implements Runnable {
         userList.append("Available users: \r\n");
         for (Handler handler : clientHandlers) {
             if (handler.getMode().equals(mode)) {
-                userList.append("* ").append(handler.getUsername());
+                userList.append("* ").append(handler.getUsername()).append("\r\n");
             }
         }
         return userList.toString();
