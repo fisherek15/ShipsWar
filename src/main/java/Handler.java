@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 
 public class Handler implements Runnable {
-    private final Socket socket;
     private final BufferedReader bufferedReader;
     private final PrintStream printStream;
     private String username;
@@ -16,7 +15,6 @@ public class Handler implements Runnable {
 
 
     public Handler(Socket socket, List<Handler> clientHandlers) throws IOException {
-        this.socket = socket;
         this.bufferedReader = new BufferedReader(new InputStreamReader((socket.getInputStream())));
         this.printStream = new PrintStream(socket.getOutputStream());
         this.username = RandomString.getAlphaNumericString(10);
@@ -70,6 +68,7 @@ public class Handler implements Runnable {
                 } else if (Objects.equals(message.getCommand(), Command.EXIT.toString())) {
                     closeConnection();
                     sendDataToSender("This connection has been closed.");
+                    break;
                 } else if (Objects.equals(message.getCommand(), Command.GET_USERNAME.toString())) {
                     sendDataToSender(getUsername());
                 } else if (Objects.equals(message.getCommand(), Command.SET_USER_MODE.toString())){
@@ -82,7 +81,6 @@ public class Handler implements Runnable {
                     sendDataToSender("Wrong command.");
                 }
             }
-            sleep(100);
         }
     }
 
@@ -111,7 +109,7 @@ public class Handler implements Runnable {
     }
 
     private void closeConnection() {
-        //todo
+        clientHandlers.remove(findUser(getUsername()));
     }
 
     private Handler findUser(String username) {
@@ -132,13 +130,5 @@ public class Handler implements Runnable {
             }
         }
         return userList.toString();
-    }
-
-    private void sleep(int milliseconds) {
-        try {
-            Thread.sleep(milliseconds);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }

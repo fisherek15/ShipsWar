@@ -3,7 +3,7 @@ public enum Mode {
     BUSY("BUSY"),
     READY("READY");
 
-    private String mode;
+    private final String mode;
 
     Mode(String mode){
         this.mode = mode;

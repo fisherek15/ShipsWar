@@ -5,6 +5,7 @@ public class Main {
         ServerMulti serverMulti = new ServerMulti(7778, 10);
         serverMulti.run();
 
+
 /*        Message message;
         message = new Message("wiadomosc");
         message = new Message("<<EXIT>>");
