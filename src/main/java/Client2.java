@@ -4,22 +4,27 @@ import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Objects;
 
-public class Client2{
+public class Client2 {
 
     public static void main(String[] args) {
+        Client2 client = new Client2();
+        client.run();
+    }
 
+    private void run() {
         Runnable task = () -> {
             try {
                 Socket socket = new Socket("192.168.0.2", 7778);
                 DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
                 BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 BufferedReader brk = new BufferedReader(new InputStreamReader(System.in));
+                Board board = new Board();
 
-                for(;;){
-                    if(br.ready()){
+                for (; ; ) {
+                    if (br.ready()) {
                         System.out.println(br.readLine());
                     }
-                    if(brk.ready()){
+                    if (brk.ready()) {
                         String dataToSend = brk.readLine();
                         if (Objects.equals(dataToSend.toUpperCase(), Command.EXIT.toString())) {
                             dos.writeBytes(Command.EXIT.toString());
@@ -34,7 +39,7 @@ public class Client2{
                 br.close();
                 brk.close();
                 socket.close();
-            } catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         };
