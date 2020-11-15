@@ -109,8 +109,10 @@ public class Board {
     }
 
     private boolean isShipAvailable(int size){
-        if(availableShips.get(size) > 0){
-            return true;
+        if(size > 0 && size <= 4) {
+            if (availableShips.get(size) > 0) {
+                return true;
+            }
         }
         return false;
     }
@@ -127,8 +129,7 @@ public class Board {
         }
     }
 
-    private Point makePoint(String point){
-        return new Point(point);
-    }
+    private void drawBoards(){
 
+    }
 }

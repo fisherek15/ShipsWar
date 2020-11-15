@@ -71,12 +71,28 @@ public class Handler implements Runnable {
                     break;
                 } else if (Objects.equals(message.getCommand(), Command.GET_USERNAME.toString())) {
                     sendDataToSender(getUsername());
-                } else if (Objects.equals(message.getCommand(), Command.SET_USER_MODE.toString())){
-                    if(setMode(message.getMessage())) {
+                } else if (Objects.equals(message.getCommand(), Command.SET_USER_MODE.toString())) {
+                    if (setMode(message.getMessage())) {
                         sendDataToSender("Your user mode has been set to " + getMode());
                     } else {
                         sendDataToSender("Wrong mode. You can set " + Mode.BUSY.toString() + " or " + Mode.READY.toString() + " only.");
                     }
+                } else if(Objects.equals(message.getCommand(), Command.START.toString())) {
+                    setMode(Mode.PLAYING.toString());
+                    Handler opponentHandler = findUser(message.getUsername());
+                    if(opponentHandler != null){
+                        if(Objects.equals(opponentHandler.getMode(), Mode.PLAYING.toString())){
+                            sendDataToSender("The game is on!\r\nYour opponent starts!");
+                            sendDataToReceiver(message.getUsername(), "The game is on!\r\nYou start!");
+                        } else if(Objects.equals(opponentHandler.getMode(), Mode.READY.toString())) {
+                            sendDataToSender("Your opponent is setting up the ships...");
+                            sendDataToReceiver(message.getUsername(), "Your opponent is ready to play!");
+                        } else {
+                            sendDataToSender(message.getUsername() + " is busy. Choose another user.");
+                        }
+                    }
+                } else if(Objects.equals(message.getCommand(), Command.SHOT.toString())) {
+
                 } else {
                     sendDataToSender("Wrong command.");
                 }

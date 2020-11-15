@@ -7,6 +7,11 @@ public enum Command {
     WRONG_COMMAND("WRONG_COMMAND"),
     GET_USERNAME("GET_USERNAME"),
     SET_USER_MODE("SET_USER_MODE"),
+    SET_SHIP("SET_SHIP"),
+    REMOVE_SHIP("REMOVE_SHIP"),
+    START("START"),
+    SHOT("SHOT"),
+    SHOT_ANSWER("SHOT_ANSWER"),
     EXIT("EXIT");
 
     private final String command;
@@ -29,6 +34,10 @@ public enum Command {
         "* GET_USERNAME - shows name of connected user. Example of use: <<GET_USERNAME>>\r\n" +
         "* SHOW_OPTIONS - shows list of all commands. Example of use: <<SHOW_OPTIONS>>\r\n" +
         "* SET_USER_MODE - sets user into BUSY or READY mode. The user will (not) be visible in list of all users. Example of use: <<SET_USER_MODE>>proper_mode. In place of 'proper_mode, insert: 'BUSY' or 'READY'.\r\n" +
+        "* SET_SHIP - sets a ship on the board. Example of use: <<SET_SHIP>>A3-A5\r\n" +
+        "* REMOVE_SHIP - removes a ship from the board. Example of use: <<REMOVE_SHIP>>A3-A5\r\n" +
+        "* START - starts the game. Use the command to start the game after sets all ships. Example of use: <<START:receiver_username>>\r\n" +
+        "* SHOT - sends shot position to opponent. Example of use: <<SHOT:receiver_username>>B3\r\r" +
         "!!! Be sure to enclose the command in double angle brackets, eg <<COMMAND>>\r\n" +
         "----------------------------------------------------------\r\n";
     }

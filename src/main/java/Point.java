@@ -2,10 +2,9 @@ public class Point {
 
     private int x;
     private int y;
-    private String point;
 
     public Point(String point) {
-        this.point = point;
+        setXY(point);
     }
 
     public int getX() {
@@ -19,6 +18,6 @@ public class Point {
     private void setXY(String point){
         String[] coordinate = point.split("");
         this.x = coordinate[0].charAt(0) - 65;
-        this.y = Integer.valueOf(coordinate[1]);
+        this.y = Integer.parseInt(coordinate[1]);
     }
 }

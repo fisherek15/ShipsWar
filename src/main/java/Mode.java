@@ -1,7 +1,8 @@
 public enum Mode {
 
     BUSY("BUSY"),
-    READY("READY");
+    READY("READY"),
+    PLAYING("PLAYING");
 
     private final String mode;
 
