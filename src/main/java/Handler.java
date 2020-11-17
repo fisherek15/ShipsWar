@@ -54,10 +54,7 @@ public class Handler implements Runnable {
             if (receivedData != null) {
                 message = new Message(receivedData);
                 if (Objects.equals(message.getCommand(), Command.TEXT.toString())) {
-                    boolean result = sendDataToReceiver(message.getUsername(), message.getMessage());
-                    if (!result) {
-                        sendDataToSender("Given username not exist! The message was not sent.");
-                    }
+                    sendDataToReceiver(message.getUsername(), message.getMessage());
                 } else if (Objects.equals(message.getCommand(), Command.SET_USERNAME.toString())) {
                     setUsername(message.getMessage());
                     sendDataToSender("Your username has been set to " + getUsername());
@@ -78,26 +75,36 @@ public class Handler implements Runnable {
                         sendDataToSender("Wrong mode. You can set " + Mode.BUSY.toString() + " or " + Mode.READY.toString() + " only.");
                     }
                 } else if(Objects.equals(message.getCommand(), Command.START.toString())) {
-                    setMode(Mode.PLAYING.toString());
-                    Handler opponentHandler = findUser(message.getUsername());
-                    if(opponentHandler != null){
-                        if(Objects.equals(opponentHandler.getMode(), Mode.PLAYING.toString())){
-                            sendDataToSender("The game is on!\r\nYour opponent starts!");
-                            sendDataToReceiver(message.getUsername(), "The game is on!\r\nYou start!");
-                        } else if(Objects.equals(opponentHandler.getMode(), Mode.READY.toString())) {
-                            sendDataToSender("Your opponent is setting up the ships...");
-                            sendDataToReceiver(message.getUsername(), "Your opponent is ready to play!");
-                        } else {
-                            sendDataToSender(message.getUsername() + " is busy. Choose another user.");
-                        }
-                    }
+                    //setMode(Mode.PLAYING.toString());
+                    //String opponentMode = getOpponentMode(message.getUsername());
+                    //if(Objects.equals(opponentMode, Mode.PLAYING.toString())){
+                        //sendDataToSender("The game is on!\r\nYour opponent starts!");
+                        sendGameDataToReceiver(Command.START, message.getUsername(), "");
+                    //} else if(Objects.equals(opponentMode, Mode.READY.toString())) {
+                     //   sendDataToSender("Your opponent is setting up the ships...");
+                    //    sendDataToReceiver(message.getUsername(), "I'm ready to play!");
+                   // } else {
+                  //      sendDataToSender(message.getUsername() + " is busy. Choose another user.");
+                  //  }
+                } else if(Objects.equals(message.getCommand(), Command.START_YES.toString())) {
+                    sendGameDataToReceiver(Command.START_YES, message.getUsername(), "");
+                } else if(Objects.equals(message.getCommand(), Command.START_NO.toString())) {
+                    sendGameDataToReceiver(Command.START_NO, message.getUsername(), "");
                 } else if(Objects.equals(message.getCommand(), Command.SHOT.toString())) {
-
+                    sendDataToReceiver(message.getUsername(), "<<" + Command.SHOT.toString() + ":" + message.getMessage() + ">>");
                 } else {
                     sendDataToSender("Wrong command.");
                 }
             }
         }
+    }
+
+    private String getOpponentMode(String username){
+        Handler handler = findUser(username);
+        if(handler != null){
+            return handler.getMode();
+        }
+        return null;
     }
 
     private String getData() {
@@ -115,13 +122,22 @@ public class Handler implements Runnable {
         printStream.println(data);
     }
 
-    private boolean sendDataToReceiver(String username, String text) {
+    private void sendDataToReceiver(String username, String text) {
         Handler handler = findUser(username);
         if (handler != null) {
-            handler.sendDataToSender(getUsername() + ": " + text);
-            return true;
+            handler.sendDataToSender("<<" + Command.TEXT.toString() + ":" + getUsername() + ">>" + text);
         }
-        return false;
+        sendDataToSender("Given username not exist! The message was not sent.");
+    }
+
+    private void sendGameDataToReceiver(Command command, String username, String text) {
+        Handler handler = findUser(username);
+        if (handler != null) {
+            if(command != null) {
+                handler.sendDataToSender("<<" + command.toString() + ":" + getUsername() + ">>" + text);
+            }
+        }
+        sendDataToSender("Given username not exist! The message was not sent.");
     }
 
     private void closeConnection() {

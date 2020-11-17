@@ -1,5 +1,5 @@
 public enum Command {
-
+    //todo consider splitting the enum to ServerCommand and ClientCommand
     SET_USERNAME("SET_USERNAME"),
     TEXT("TEXT"),
     SHOW_OPTIONS("SHOW_OPTIONS"),
@@ -10,6 +10,8 @@ public enum Command {
     SET_SHIP("SET_SHIP"),
     REMOVE_SHIP("REMOVE_SHIP"),
     START("START"),
+    START_YES("START_YES"),
+    START_NO("START_NO"),
     SHOT("SHOT"),
     SHOT_ANSWER("SHOT_ANSWER"),
     EXIT("EXIT");
@@ -36,7 +38,9 @@ public enum Command {
         "* SET_USER_MODE - sets user into BUSY or READY mode. The user will (not) be visible in list of all users. Example of use: <<SET_USER_MODE>>proper_mode. In place of 'proper_mode, insert: 'BUSY' or 'READY'.\r\n" +
         "* SET_SHIP - sets a ship on the board. Example of use: <<SET_SHIP>>A3-A5\r\n" +
         "* REMOVE_SHIP - removes a ship from the board. Example of use: <<REMOVE_SHIP>>A3-A5\r\n" +
-        "* START - starts the game. Use the command to start the game after sets all ships. Example of use: <<START:receiver_username>>\r\n" +
+        "* START - send a game proposal. Use the command to send the game proposal after sets all ships. Example of use: <<START:receiver_username>>\r\n" +
+        "* START_YES - accepts the game proposal. Use the command to accept the game proposal after sets all ships. Example of use: <<START_YES:receiver_username>>\r\n" +
+        "* START_NO - refuse the game proposal. Use the command to refuse the game proposal. Example of use: <<START_NO:receiver_username>>\r\n" +
         "* SHOT - sends shot position to opponent. Example of use: <<SHOT:receiver_username>>B3\r\r" +
         "!!! Be sure to enclose the command in double angle brackets, eg <<COMMAND>>\r\n" +
         "----------------------------------------------------------\r\n";

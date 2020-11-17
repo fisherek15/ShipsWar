@@ -22,16 +22,10 @@ public class Client2 {
 
                 for (; ; ) {
                     if (br.ready()) {
-                        System.out.println(br.readLine());
+                        processReceivedData(br.readLine());
                     }
                     if (brk.ready()) {
-                        String dataToSend = brk.readLine();
-                        if (Objects.equals(dataToSend.toUpperCase(), Command.EXIT.toString())) {
-                            dos.writeBytes(Command.EXIT.toString());
-                            break;
-                        } else {
-                            dos.writeBytes(dataToSend + "\n");
-                        }
+                        if(processDataToSend(dos, brk.readLine()) == -1) break;
                     }
                 }
 
@@ -45,5 +39,41 @@ public class Client2 {
         };
 
         new Thread(task).start();
+    }
+
+    private void processReceivedData(String data){
+        Message message = new Message(data);
+        if(Objects.equals(Command.TEXT.toString(), message.getCommand())){
+            System.out.println(message.getUsername() + ": " + message.getMessage());
+        } else if(Objects.equals(Command.START.toString(), message.getCommand())){
+            System.out.println();
+        } else if(Objects.equals(Command.START_YES.toString(), message.getCommand())){
+
+        } else if(Objects.equals(Command.START_NO.toString(), message.getCommand())){
+
+        } else {
+            System.out.println(data);
+        }
+    }
+
+    private int processDataToSend(DataOutputStream dos, String data){
+        Message message = new Message(data);
+        try {
+            if (Objects.equals(Command.START.toString(), message.getCommand())) {
+
+            } else if (Objects.equals(Command.START_YES.toString(), message.getCommand())) {
+
+            } else if (Objects.equals(Command.START_NO.toString(), message.getCommand())) {
+
+            } else if (Objects.equals(Command.EXIT.toString(), message.getCommand())) {
+                dos.writeBytes(Command.EXIT.toString());
+                return -1;
+            } else {
+                dos.writeBytes(data + "\n");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 1;
     }
 }

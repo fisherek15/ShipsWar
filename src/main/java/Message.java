@@ -3,7 +3,7 @@ import java.util.regex.Pattern;
 
 public class Message {
 
-    private String command;
+    private String command; //todo consider changing the property type to Command
     private String message;
     private String username;
 

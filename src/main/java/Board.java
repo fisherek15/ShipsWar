@@ -2,13 +2,15 @@ import java.util.*;
 
 public class Board {
 
-    //<<Size of ship, Available ships>>
     private Map<Integer, Integer> availableShips;
     private String[][] board = new String[10][10];
     private String[][] opponentBoard = new String[10][10];
     private int sunkenShips;
+    private String opponentUsername;
+    private String username;
 
     public Board() {
+        //<<Size of ship, Available ships>>
         this.availableShips = Map.of(
                 1,4,
                 2,3,
@@ -24,10 +26,6 @@ public class Board {
         Arrays.stream(array)
                 .forEach(a -> Arrays.fill(a, "~"));
         return  array;
-    }
-
-    public String processCommand(String command){
-        return null;
     }
 
     private boolean setOrRemoveShip(Point point1, Point point2, Boolean addShip) {
