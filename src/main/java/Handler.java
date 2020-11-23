@@ -75,21 +75,11 @@ public class Handler implements Runnable {
                         sendDataToSender("Wrong mode. You can set " + Mode.BUSY.toString() + " or " + Mode.READY.toString() + " only.");
                     }
                 } else if(Objects.equals(message.getCommand(), Command.START.toString())) {
-                    //setMode(Mode.PLAYING.toString());
-                    //String opponentMode = getOpponentMode(message.getUsername());
-                    //if(Objects.equals(opponentMode, Mode.PLAYING.toString())){
-                        //sendDataToSender("The game is on!\r\nYour opponent starts!");
-                        sendGameDataToReceiver(Command.START, message.getUsername(), "");
-                    //} else if(Objects.equals(opponentMode, Mode.READY.toString())) {
-                     //   sendDataToSender("Your opponent is setting up the ships...");
-                    //    sendDataToReceiver(message.getUsername(), "I'm ready to play!");
-                   // } else {
-                  //      sendDataToSender(message.getUsername() + " is busy. Choose another user.");
-                  //  }
-                } else if(Objects.equals(message.getCommand(), Command.START_YES.toString())) {
-                    sendGameDataToReceiver(Command.START_YES, message.getUsername(), "");
-                } else if(Objects.equals(message.getCommand(), Command.START_NO.toString())) {
-                    sendGameDataToReceiver(Command.START_NO, message.getUsername(), "");
+                    sendGameDataToReceiver(Command.START, message.getUsername(), "");
+                } else if(Objects.equals(message.getCommand(), Command.NEW_GAME_YES.toString())) {
+                    sendGameDataToReceiver(Command.NEW_GAME_YES, message.getUsername(), "");
+                } else if(Objects.equals(message.getCommand(), Command.NEW_GAME_NO.toString())) {
+                    sendGameDataToReceiver(Command.NEW_GAME_NO, message.getUsername(), "");
                 } else if(Objects.equals(message.getCommand(), Command.SHOT.toString())) {
                     sendDataToReceiver(message.getUsername(), "<<" + Command.SHOT.toString() + ":" + message.getMessage() + ">>");
                 } else {

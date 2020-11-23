@@ -22,6 +22,14 @@ public class Board {
         this.sunkenShips = 0;
     }
 
+    public void setOpponentUsername(String opponentUsername) {
+        this.opponentUsername = opponentUsername;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     private String[][] resetArray(String[][] array){
         Arrays.stream(array)
                 .forEach(a -> Arrays.fill(a, "~"));

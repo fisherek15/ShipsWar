@@ -14,7 +14,10 @@ public enum Command {
     START_NO("START_NO"),
     SHOT("SHOT"),
     SHOT_ANSWER("SHOT_ANSWER"),
-    EXIT("EXIT");
+    EXIT("EXIT"),
+    NEW_GAME("NEW_GAME"),
+    NEW_GAME_YES("NEW_GAME_YES"),
+    NEW_GAME_NO("NEW_GAME_NO");
 
     private final String command;
 
