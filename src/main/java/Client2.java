@@ -31,7 +31,7 @@ public class Client2 {
                         processReceivedData(br.readLine());
                     }
                     if (brk.ready()) {
-                        if(processDataToSend(dos, brk.readLine()) == -1) break;
+                        if(processDataToSend(brk.readLine()) == -1) break;
                     }
                 }
 
