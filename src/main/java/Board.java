@@ -7,7 +7,6 @@ public class Board {
     private String[][] opponentBoard = new String[10][10];
     private int sunkenShips;
     private String opponentUsername;
-    private String username;
 
     public Board() {
         //<<Size of ship, Available ships>>
@@ -26,8 +25,8 @@ public class Board {
         this.opponentUsername = opponentUsername;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public String getOpponentUsername() {
+        return opponentUsername;
     }
 
     private String[][] resetArray(String[][] array){
@@ -123,7 +122,7 @@ public class Board {
         return false;
     }
 
-    private boolean checkShotAndSetField(Point shot){
+    public boolean checkShotAndSetField(Point shot){
         int x = shot.getX();
         int y = shot.getY();
         if(board[y][x].equals("X")) {

@@ -10,6 +10,7 @@ public class Client2 {
 
     private List<Board> boards;
     private String username;
+    DataOutputStream dos;
 
     public static void main(String[] args) {
         Client2 client = new Client2();
@@ -20,7 +21,7 @@ public class Client2 {
         Runnable task = () -> {
             try {
                 Socket socket = new Socket("192.168.0.2", 7778);
-                DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+                dos = new DataOutputStream(socket.getOutputStream());
                 BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 BufferedReader brk = new BufferedReader(new InputStreamReader(System.in));
                 boards = new ArrayList<>();
@@ -47,29 +48,45 @@ public class Client2 {
     }
 
     private void processReceivedData(String data){
-        Message message = new Message(data);
-        if(Objects.equals(Command.TEXT.toString(), message.getCommand())){
-            System.out.println(message.getUsername() + ": " + message.getMessage());
-        } else if(Objects.equals(Command.START.toString(), message.getCommand())){
-            System.out.println(message.getUsername() + " is ready to play.");
-            Board board = new Board();
-            board.setOpponentUsername(message.getUsername());
-        } else if(Objects.equals(Command.NEW_GAME.toString(), message.getCommand())){
-            System.out.println(message.getUsername() + " want to start a new game. Send accept or refuse");
-        } else if(Objects.equals(Command.NEW_GAME_YES.toString(), message.getCommand())){
-            System.out.println(message.getUsername() + " accepted your proposal of new game.");
-        } else if(Objects.equals(Command.NEW_GAME_NO.toString(), message.getCommand())){
-            System.out.println(message.getUsername() + " refuse your proposal of new game.");
-        } else {
-            System.out.println(data);
+        try {
+            Message message = new Message(data);
+            if (Objects.equals(Command.TEXT.toString(), message.getCommand())) {
+                System.out.println(message.getUsername() + ": " + message.getMessage());
+            } else if (Objects.equals(Command.START.toString(), message.getCommand())) {
+                System.out.println(message.getUsername() + " is ready to play.");
+                Board board = new Board();
+                board.setOpponentUsername(message.getUsername());
+                boards.add(board);
+            } else if (Objects.equals(Command.NEW_GAME.toString(), message.getCommand())) {
+                System.out.println(message.getUsername() + " want to start a new game. Send accept or refuse");
+            } else if (Objects.equals(Command.NEW_GAME_YES.toString(), message.getCommand())) {
+                System.out.println(message.getUsername() + " accepted your proposal of new game.");
+            } else if (Objects.equals(Command.NEW_GAME_NO.toString(), message.getCommand())) {
+                System.out.println(message.getUsername() + " refuse your proposal of new game.");
+            } else if (Objects.equals(Command.SHOT.toString(), message.getCommand())) {
+                Board board = findBoard(message.getUsername());
+                if (board != null) {
+                    boolean result = board.checkShotAndSetField(new Point(message.getMessage()));
+                    if (result) {
+                        dos.writeBytes("Hit!");
+                    } else {
+                        dos.writeBytes("Miss");
+                    }
+                }
+            } else {
+                System.out.println(data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private int processDataToSend(DataOutputStream dos, String data){
+    private int processDataToSend(String data){
         Message message = new Message(data);
         try {
             if (Objects.equals(Command.START.toString(), message.getCommand())) {
                 dos.writeBytes("<<" + Command.START.toString() + ":" + message.getUsername() + ">>");
+
             } else if(Objects.equals(Command.SET_USERNAME.toString(), message.getCommand())){
                 this.username = message.getMessage();
                 dos.writeBytes(data);
@@ -79,6 +96,9 @@ public class Client2 {
                 dos.writeBytes("<<" + Command.NEW_GAME_YES.toString() + ":" + message.getUsername() + ">>");
             } else if (Objects.equals(Command.NEW_GAME_NO.toString(), message.getCommand())) {
                 dos.writeBytes("<<" + Command.NEW_GAME_NO.toString() + ":" + message.getUsername() + ">>");
+            } else if(Objects.equals(Command.SET_USERNAME.toString(), message.getMessage())){
+                dos.writeBytes("<<" + Command.SET_USERNAME.toString() + ">>" + message.getMessage());
+                this.username = message.getMessage();
             } else if (Objects.equals(Command.EXIT.toString(), message.getCommand())) {
                 dos.writeBytes(Command.EXIT.toString());
                 return -1;
@@ -90,4 +110,15 @@ public class Client2 {
         }
         return 1;
     }
+
+    private Board findBoard(String opponentUsername){
+        for(Board board : boards){
+            if(board.getOpponentUsername().equals(opponentUsername)){
+                return board;
+            }
+        }
+        return null;
+    }
 }
+
+
